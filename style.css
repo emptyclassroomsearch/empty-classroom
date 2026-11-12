@@ -1,0 +1,572 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ink: #172033;
+  --muted: #687386;
+  --line: #e5e9f0;
+  --surface: #ffffff;
+  --background: #f4f6fa;
+  --primary: #315eea;
+  --primary-dark: #244bc5;
+  --success: #16835d;
+  --success-bg: #eaf7f1;
+  --warning-bg: #fff7e8;
+  --shadow: 0 12px 34px rgba(24, 39, 75, 0.07);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--ink);
+  font-family: "Noto Sans KR", system-ui, sans-serif;
+}
+
+button, select {
+  font: inherit;
+}
+
+.app {
+  width: min(900px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 42px 0 56px;
+}
+
+.hero {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 42px);
+  letter-spacing: -.05em;
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.panel, .results-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 26px;
+}
+
+.search-panel {
+  margin-bottom: 30px;
+}
+
+.results-section {
+  padding: 26px;
+  margin-bottom: 24px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -.04em;
+}
+
+.section-heading .eyebrow {
+  margin-bottom: 4px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid #d9dfeb;
+  border-radius: 11px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+}
+
+select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(49,94,234,.12);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 15px 0 18px;
+}
+
+.button {
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button-primary {
+  width: 100%;
+  min-height: 50px;
+  color: #fff;
+  background: var(--primary);
+}
+
+.button-primary:hover {
+  background: var(--primary-dark);
+}
+
+.button-light {
+  background: #f0f3f8;
+  color: #43506a;
+}
+
+.button-light:hover {
+  background: #e7ebf3;
+}
+
+.count {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.status-message {
+  padding: 16px;
+  border-radius: 12px;
+  background: #f6f8fb;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.status-message.success {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.status-message.warning {
+  color: #8a5b0a;
+  background: var(--warning-bg);
+}
+
+.results-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.room-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+
+.room-card:hover {
+  border-color: #cbd7fb;
+  box-shadow: 0 8px 22px rgba(24, 39, 75, 0.06);
+  transform: translateY(-2px);
+}
+
+.room-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.room-number {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.room-name {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.room-location {
+  margin-top: 9px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.room-meta {
+  display: grid;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 13px;
+  border-radius: 11px;
+  background: #f7f8fc;
+}
+
+.room-meta-row,
+.next-class {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.meta-label {
+  flex-shrink: 0;
+  min-width: 86px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.meta-value {
+  color: var(--ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.availability-row .meta-value {
+  color: var(--success);
+}
+
+.next-class {
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+}
+
+.room-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.available-tag {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: var(--success);
+  background: var(--success-bg);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.detail-button {
+  border: 1px solid #dce3f0;
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #fff;
+  color: #40506d;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.detail-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.detail-panel {
+  margin-top: 24px;
+}
+
+.schedule-day {
+  margin: 0 0 18px;
+}
+
+.schedule-day h3 {
+  margin: 0 0 9px;
+  font-size: 14px;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.schedule-item:last-child {
+  border-bottom: 0;
+}
+
+.schedule-time {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.empty-day {
+  color: #9aa3b2;
+  font-size: 12px;
+}
+
+.footer {
+  color: #8993a3;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .app {
+    width: min(100% - 22px, 900px);
+    padding-top: 26px;
+  }
+
+  .panel, .results-section {
+    padding: 19px;
+    border-radius: 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .room-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .room-actions {
+    justify-content: space-between;
+  }
+
+  .room-number {
+    font-size: 18px;
+  }
+}   
+
+/* =========================
+   다크모드 디자인
+========================= */
+
+/* 제목과 다크모드 버튼 배치 */
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* 다크모드 전환 버튼 */
+.theme-toggle {
+  flex-shrink: 0;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+}
+
+/* 색상 전환 효과 */
+body,
+.panel,
+.results-section,
+.room-card,
+select,
+.button,
+.theme-toggle,
+.status-message,
+.room-meta {
+  transition:
+    background-color .25s,
+    color .25s,
+    border-color .25s,
+    box-shadow .25s;
+}
+
+/* 다크모드 색상 */
+html[data-theme="dark"] {
+  --ink: #edf1fa;
+  --muted: #a6b0c4;
+  --line: #39445a;
+  --surface: #252d40;
+  --background: #171c2b;
+  --primary: #7895ff;
+  --primary-dark: #607fe8;
+  --success: #75d6ad;
+  --success-bg: #193c36;
+  --warning-bg: #45351f;
+  --shadow: 0 12px 34px rgba(0, 0, 0, 0.18);
+}
+
+/* 기본 배경 */
+html[data-theme="dark"] body {
+  background: var(--background);
+  color: var(--ink);
+}
+
+/* 검색창과 결과창 */
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .results-section {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+/* 입력 선택창 */
+html[data-theme="dark"] select {
+  background: #20283a;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] select:focus {
+  border-color: var(--primary);
+}
+
+/* 초기화와 닫기 버튼 */
+html[data-theme="dark"] .button-light {
+  background: #343e53;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .button-light:hover {
+  background: #414d65;
+}
+
+/* 검색 버튼 */
+html[data-theme="dark"] .button-primary {
+  background: var(--primary-dark);
+  color: #fff;
+}
+
+/* 검색 결과 안내 */
+html[data-theme="dark"] .status-message {
+  background: #20283a;
+  color: var(--muted);
+}
+
+html[data-theme="dark"] .status-message.success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+html[data-theme="dark"] .status-message.warning {
+  background: #45351f;
+  color: #ffd58a;
+}
+
+/* 강의실 카드 */
+html[data-theme="dark"] .room-card {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .room-card:hover {
+  border-color: var(--primary);
+}
+
+/* 강의실 이용 정보 */
+html[data-theme="dark"] .room-meta {
+  background: #20283a;
+}
+
+html[data-theme="dark"] .meta-value {
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .availability-row .meta-value {
+  color: var(--success);
+}
+
+/* 빈 강의실 표시 */
+html[data-theme="dark"] .available-tag {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+/* 시간표 버튼 */
+html[data-theme="dark"] .detail-button {
+  background: #252d40;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .detail-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* 시간표 */
+html[data-theme="dark"] .schedule-item {
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .schedule-time,
+html[data-theme="dark"] .empty-day {
+  color: var(--muted);
+}
+
+/* 개수 표시 */
+html[data-theme="dark"] .count {
+  background: #303c5b;
+  color: #a9bcff;
+}
+
+/* 모바일 화면 */
+@media (max-width: 600px) {
+  .hero-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .theme-toggle {
+    align-self: flex-end;
+  }
+}

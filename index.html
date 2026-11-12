@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>빈 강의실 찾기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">CAMPUS CLASSROOM FINDER</p>
+          <h1>빈 강의실 찾기</h1>
+          <p class="subtitle">원하는 요일과 시간에 사용할 수 있는 강의실을 찾아봐.</p>
+        </div>
+
+        <button type="button" id="themeToggle" class="theme-toggle">
+          🌙 다크 모드
+        </button>
+      </div>
+    </header>
+
+    <section class="panel search-panel" aria-labelledby="search-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SEARCH</p>
+          <h2 id="search-title">검색 조건</h2>
+        </div>
+        <button type="button" id="resetButton" class="button button-light">초기화</button>
+      </div>
+
+      <form id="searchForm">
+        <div class="form-grid">
+          <label>
+            <span>건물</span>
+            <select id="buildingSelect" required>
+              <option value="근학관">근학관</option>
+            </select>
+          </label>
+
+          <label>
+            <span>층</span>
+            <select id="floorSelect" required>
+              <option value="">층 선택</option>
+            </select>
+          </label>
+
+          <label>
+            <span>요일</span>
+            <select id="daySelect" required>
+              <option value="월요일">월요일</option>
+              <option value="화요일">화요일</option>
+              <option value="수요일">수요일</option>
+              <option value="목요일">목요일</option>
+              <option value="금요일">금요일</option>
+              <option value="토요일">토요일</option>
+              <option value="일요일">일요일</option>
+            </select>
+          </label>
+
+          <label>
+            <span>시작 시간</span>
+            <select id="startTime" required></select>
+          </label>
+
+          <label>
+            <span>종료 시간</span>
+            <select id="endTime" required></select>
+          </label>
+        </div>
+
+        <p class="hint">30분 단위로 검색할 수 있어. 검색 시간 전체가 비어 있는 강의실만 표시돼.</p>
+        <button type="submit" class="button button-primary" id="searchButton">빈 강의실 검색</button>
+      </form>
+    </section>
+
+    <section class="results-section" aria-live="polite">
+      <div class="section-heading results-heading">
+        <div>
+          <p class="eyebrow">RESULT</p>
+          <h2>검색 결과</h2>
+        </div>
+        <span id="resultCount" class="count">검색 전</span>
+      </div>
+      <div id="statusMessage" class="status-message">
+        건물, 층, 요일과 시간을 선택한 뒤 검색해 줘.
+      </div>
+      <div id="resultsList" class="results-list"></div>
+    </section>
+
+    <section class="panel detail-panel" id="detailPanel" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">ROOM SCHEDULE</p>
+          <h2 id="detailTitle">강의실 시간표</h2>
+        </div>
+        <button type="button" id="closeDetailButton" class="button button-light">닫기</button>
+      </div>
+      <div id="detailContent"></div>
+    </section>
+
+    <footer class="footer">
+      <p>현재 등록된 근학관 강의실만 검색할 수 있어. 자료가 없는 층이나 강의실은 검색 결과에 포함되지 않아.</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
