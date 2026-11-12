@@ -23,6 +23,10 @@ const elements = {
   closeDetail: document.getElementById("closeDetailButton")
 };
 
+// =========================
+// 시간 관련 기능
+// =========================
+
 function toMinutes(time) {
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
@@ -31,18 +35,25 @@ function toMinutes(time) {
 function formatTime(totalMinutes) {
   const hour = Math.floor(totalMinutes / 60);
   const minute = totalMinutes % 60;
+
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
 
 function createTimeOptions() {
   for (let minutes = 7 * 60; minutes <= 22 * 60; minutes += 30) {
     const value = formatTime(minutes);
+
     elements.start.add(new Option(value, value));
     elements.end.add(new Option(value, value));
   }
+
   elements.start.value = "09:00";
   elements.end.value = "10:00";
 }
+
+// =========================
+// 건물 및 층 선택
+// =========================
 
 function loadFloors() {
   const floors = [...new Set(
@@ -57,8 +68,14 @@ function loadFloors() {
     elements.floor.add(new Option(`${floor}층`, String(floor)));
   });
 
-  if (floors.length) elements.floor.value = String(floors[0]);
+  if (floors.length) {
+    elements.floor.value = String(floors[0]);
+  }
 }
+
+// =========================
+// 수업 시간 겹침 확인
+// =========================
 
 function overlaps(searchStart, searchEnd, classStart, classEnd) {
   return searchStart < classEnd && searchEnd > classStart;
@@ -77,7 +94,6 @@ function getRoomConflicts(room, day, searchStart, searchEnd) {
   });
 }
 
-// 검색 종료 시간 이후 가장 먼저 시작하는 수업 찾기
 function getNextSchedule(room, day, searchEnd) {
   return (room.schedules || [])
     .filter(item =>
@@ -87,6 +103,10 @@ function getNextSchedule(room, day, searchEnd) {
       toMinutes(a.start) - toMinutes(b.start)
     )[0] || null;
 }
+
+// =========================
+// 검색 결과 상태
+// =========================
 
 function setStatus(message, type = "") {
   elements.status.textContent = message;
@@ -111,12 +131,21 @@ function createInfoRow(label, value, className = "") {
   content.textContent = value;
 
   row.append(title, content);
+
   return row;
 }
+
+// =========================
+// 강의실 카드 생성
+// =========================
 
 function createRoomCard(room, building, floor, day, start, searchEnd) {
   const card = document.createElement("article");
   card.className = "room-card";
+
+  // 카드 상단
+  const header = document.createElement("div");
+  header.className = "room-card-header";
 
   const info = document.createElement("div");
   info.className = "room-info";
@@ -133,17 +162,22 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
   location.className = "room-location";
   location.textContent = `${building} ${floor}층`;
 
+  info.append(number, name, location);
+
+  const badge = document.createElement("span");
+  badge.className = "room-card-badge";
+  badge.innerHTML = '<span class="room-card-badge-dot"></span> 이용 가능';
+
+  header.append(info, badge);
+
+  // 검색 정보
   const meta = document.createElement("div");
   meta.className = "room-meta";
 
   const nextSchedule = getNextSchedule(room, day, searchEnd);
 
-  const availableUntil = nextSchedule
-    ? toMinutes(nextSchedule.start)
-    : null;
-
   const availableText = nextSchedule
-    ? `${start} ~ ${formatTime(availableUntil)}`
+    ? `${start} ~ ${nextSchedule.start}`
     : `${start} 이후`;
 
   meta.append(
@@ -151,15 +185,16 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
     createInfoRow("이용 가능 시간", availableText, "availability-row")
   );
 
+  // 다음 수업 정보
   const nextInfo = document.createElement("div");
   nextInfo.className = "next-class";
 
   const nextLabel = document.createElement("span");
-  nextLabel.className = "meta-label";
-  nextLabel.textContent = "다음 수업";
+  nextLabel.className = "next-class-label";
+  nextLabel.textContent = "NEXT CLASS";
 
   const nextValue = document.createElement("span");
-  nextValue.className = "meta-value";
+  nextValue.className = "next-class-value";
 
   if (nextSchedule) {
     nextValue.textContent =
@@ -171,28 +206,33 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
   nextInfo.append(nextLabel, nextValue);
   meta.append(nextInfo);
 
-  info.append(number, name, location, meta);
-
-  const actions = document.createElement("div");
-  actions.className = "room-actions";
+  // 카드 하단
+  const footer = document.createElement("div");
+  footer.className = "room-card-footer";
 
   const tag = document.createElement("span");
   tag.className = "available-tag";
-  tag.textContent = "빈 강의실";
+  tag.textContent = "✓ 빈 강의실";
 
   const detailButton = document.createElement("button");
   detailButton.type = "button";
   detailButton.className = "detail-button";
-  detailButton.textContent = "시간표 보기";
+  detailButton.textContent = "상세 시간표 보기 →";
+
   detailButton.addEventListener("click", () => {
     showRoomSchedule(room);
   });
 
-  actions.append(tag, detailButton);
-  card.append(info, actions);
+  footer.append(tag, detailButton);
+
+  card.append(header, meta, footer);
 
   return card;
 }
+
+// =========================
+// 강의실 검색
+// =========================
 
 function searchClassrooms(event) {
   event.preventDefault();
@@ -223,7 +263,12 @@ function searchClassrooms(event) {
 
   if (roomsOnFloor.length === 0) {
     clearResults();
-    setStatus("해당 층의 강의실 시간표 자료가 등록되어 있지 않아.", "warning");
+
+    setStatus(
+      "해당 층의 강의실 시간표 자료가 등록되어 있지 않아.",
+      "warning"
+    );
+
     return;
   }
 
@@ -239,6 +284,7 @@ function searchClassrooms(event) {
       `${building} ${floorValue}층에는 ${day} ${start}~${end} 전체 시간 동안 비어 있는 등록 강의실이 없어.`,
       "warning"
     );
+
     return;
   }
 
@@ -265,6 +311,10 @@ function searchClassrooms(event) {
   });
 }
 
+// =========================
+// 강의실 상세 시간표
+// =========================
+
 function showRoomSchedule(room) {
   elements.detailTitle.textContent =
     `${room.building} ${room.floor}층 · ${room.room}호 시간표`;
@@ -275,20 +325,36 @@ function showRoomSchedule(room) {
     const dayBlock = document.createElement("div");
     dayBlock.className = "schedule-day";
 
-    const heading = document.createElement("h3");
-    heading.textContent = day;
-    dayBlock.append(heading);
-
     const schedules = (room.schedules || [])
       .filter(item => item.day === day)
       .sort((a, b) =>
         toMinutes(a.start) - toMinutes(b.start)
       );
 
+    dayBlock.classList.add(
+      schedules.length ? "has-schedules" : "is-empty"
+    );
+
+    const heading = document.createElement("h3");
+    heading.className = "schedule-heading";
+
+    const dayName = document.createElement("span");
+    dayName.textContent = day;
+
+    const dayCount = document.createElement("span");
+    dayCount.className = "schedule-count";
+    dayCount.textContent = schedules.length
+      ? `${schedules.length}개 수업`
+      : "수업 없음";
+
+    heading.append(dayName, dayCount);
+    dayBlock.append(heading);
+
     if (schedules.length === 0) {
       const empty = document.createElement("p");
       empty.className = "empty-day";
-      empty.textContent = "등록된 수업 없음";
+      empty.textContent = "등록된 수업이 없어. 자유롭게 이용할 수 있어.";
+
       dayBlock.append(empty);
     } else {
       schedules.forEach(item => {
@@ -296,11 +362,12 @@ function showRoomSchedule(room) {
         row.className = "schedule-item";
 
         const subject = document.createElement("span");
+        subject.className = "schedule-subject";
         subject.textContent = item.subject;
 
         const time = document.createElement("span");
         time.className = "schedule-time";
-        time.textContent = `${item.start}~${item.end}`;
+        time.textContent = `${item.start} ~ ${item.end}`;
 
         row.append(subject, time);
         dayBlock.append(row);
@@ -311,23 +378,68 @@ function showRoomSchedule(room) {
   });
 
   elements.detailPanel.hidden = false;
+
   elements.detailPanel.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
 }
 
+// =========================
+// 검색 초기화
+// =========================
+
 function resetSearch() {
   elements.building.value = "근학관";
+
   loadFloors();
+
   elements.day.value = "월요일";
   elements.start.value = "09:00";
   elements.end.value = "10:00";
 
   clearResults();
+
   setStatus("건물, 층, 요일과 시간을 선택한 뒤 검색해 줘.");
+
   elements.detailPanel.hidden = true;
 }
+
+// =========================
+// 다크 모드
+// =========================
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+
+  document.body.classList.toggle("dark-mode", isDark);
+
+  themeToggle.textContent = isDark
+    ? "☀️ 라이트 모드"
+    : "🌙 다크 모드";
+
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+}
+
+const savedTheme =
+  localStorage.getItem("classroomFinderTheme") || "light";
+
+applyTheme(savedTheme);
+
+themeToggle.addEventListener("click", () => {
+  const isDark = document.body.classList.contains("dark-mode");
+  const nextTheme = isDark ? "light" : "dark";
+
+  localStorage.setItem("classroomFinderTheme", nextTheme);
+
+  applyTheme(nextTheme);
+});
+
+// =========================
+// 데이터 불러오기
+// =========================
 
 async function initialize() {
   createTimeOptions();
@@ -346,15 +458,18 @@ async function initialize() {
     }
 
     classroomData.classrooms = data.classrooms;
-    classroomData.unassignedSchedules = Array.isArray(data.unassignedSchedules)
-      ? data.unassignedSchedules
-      : [];
+
+    classroomData.unassignedSchedules =
+      Array.isArray(data.unassignedSchedules)
+        ? data.unassignedSchedules
+        : [];
 
     loadFloors();
 
     setStatus(
       `시간표 데이터를 불러왔어. 등록된 강의실 ${classroomData.classrooms.length}개를 검색할 수 있어.`
     );
+
   } catch (error) {
     console.error(error);
 
@@ -368,48 +483,17 @@ async function initialize() {
   }
 }
 
+// =========================
+// 이벤트 연결
+// =========================
+
 elements.form.addEventListener("submit", searchClassrooms);
+
 elements.reset.addEventListener("click", resetSearch);
 
 elements.closeDetail.addEventListener("click", () => {
   elements.detailPanel.hidden = true;
 });
 
-// =========================
-// 다크모드 전환 기능
-// =========================
-
-const themeToggle = document.getElementById("themeToggle");
-
-// 테마 적용
-function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-
-  const isDark = theme === "dark";
-
-  themeToggle.textContent = isDark
-    ? "☀️ 라이트 모드"
-    : "🌙 다크 모드";
-
-  themeToggle.setAttribute("aria-pressed", String(isDark));
-}
-
-// 저장된 테마 불러오기
-const savedTheme = localStorage.getItem("classroomFinderTheme");
-
-applyTheme(savedTheme === "dark" ? "dark" : "light");
-
-// 버튼 클릭 시 테마 변경
-themeToggle.addEventListener("click", () => {
-  const currentTheme = document.documentElement.dataset.theme;
-
-  const nextTheme = currentTheme === "dark"
-    ? "light"
-    : "dark";
-
-  applyTheme(nextTheme);
-
-  // 선택한 테마 저장
-  localStorage.setItem("classroomFinderTheme", nextTheme);
-});
+// 프로그램 시작
 initialize();
