@@ -3,107 +3,249 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>빈 강의실 찾기</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>빈 강의실 찾기 | CAMPUS</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main class="app">
-    <header class="hero">
-      <div class="hero-top">
-        <div>
-          <p class="eyebrow">CAMPUS CLASSROOM FINDER</p>
-          <h1>빈 강의실 찾기</h1>
-          <p class="subtitle">원하는 요일과 시간에 사용할 수 있는 강의실을 찾아봐.</p>
-        </div>
 
-        <button type="button" id="themeToggle" class="theme-toggle">
-          🌙 다크 모드
-        </button>
+<body>
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <span>UNIVERSITY CAMPUS SERVICE</span>
+      <span>스마트 캠퍼스 · 강의실 안내</span>
+    </div>
+  </div>
+
+  <main class="app">
+
+    <!-- 상단 헤더 -->
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div class="brand-text">
+          <strong>CAMPUS</strong>
+          <span>SMART CAMPUS SERVICE</span>
+        </div>
       </div>
+
+      <button type="button" id="themeToggle" class="theme-toggle">
+        🌙 다크 모드
+      </button>
     </header>
 
-    <section class="panel search-panel" aria-labelledby="search-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">SEARCH</p>
-          <h2 id="search-title">검색 조건</h2>
+    <!-- 메인 배너 -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-label">
+          <span class="hero-label-dot"></span>
+          CAMPUS CLASSROOM FINDER
         </div>
-        <button type="button" id="resetButton" class="button button-light">초기화</button>
+
+        <h1>
+          비어 있는 강의실을<br>
+          <span>쉽고 빠르게 찾아보세요.</span>
+        </h1>
+
+        <p class="subtitle">
+          원하는 건물과 시간대를 선택하면<br>
+          이용 가능한 강의실을 한눈에 확인할 수 있어.
+        </p>
+
+        <div class="hero-tags">
+          <span>✓ 실시간 조건 검색</span>
+          <span>✓ 강의실별 시간표</span>
+          <span>✓ 모바일 지원</span>
+        </div>
       </div>
 
-      <form id="searchForm">
-        <div class="form-grid">
-          <label>
-            <span>건물</span>
-            <select id="buildingSelect" required>
-              <option value="근학관">근학관</option>
-            </select>
-          </label>
-
-          <label>
-            <span>층</span>
-            <select id="floorSelect" required>
-              <option value="">층 선택</option>
-            </select>
-          </label>
-
-          <label>
-            <span>요일</span>
-            <select id="daySelect" required>
-              <option value="월요일">월요일</option>
-              <option value="화요일">화요일</option>
-              <option value="수요일">수요일</option>
-              <option value="목요일">목요일</option>
-              <option value="금요일">금요일</option>
-              <option value="토요일">토요일</option>
-              <option value="일요일">일요일</option>
-            </select>
-          </label>
-
-          <label>
-            <span>시작 시간</span>
-            <select id="startTime" required></select>
-          </label>
-
-          <label>
-            <span>종료 시간</span>
-            <select id="endTime" required></select>
-          </label>
+      <div class="hero-visual">
+        <div class="visual-circle circle-one"></div>
+        <div class="visual-circle circle-two"></div>
+        <div class="visual-card">
+          <div class="visual-card-top">
+            <span>CLASSROOM</span>
+            <span class="visual-status">AVAILABLE</span>
+          </div>
+          <div class="visual-room">12506</div>
+          <div class="visual-room-name">강의실 이용 가능</div>
+          <div class="visual-line"></div>
+          <div class="visual-card-bottom">
+            <span>MONDAY</span>
+            <strong>09:00 - 12:00</strong>
+          </div>
         </div>
-
-        <p class="hint">30분 단위로 검색할 수 있어. 검색 시간 전체가 비어 있는 강의실만 표시돼.</p>
-        <button type="submit" class="button button-primary" id="searchButton">빈 강의실 검색</button>
-      </form>
+        <div class="visual-decoration decoration-one"></div>
+        <div class="visual-decoration decoration-two"></div>
+      </div>
     </section>
 
+    <!-- 검색 영역 -->
+    <section class="search-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">CLASSROOM SEARCH</p>
+          <h2 id="search-title">강의실 검색</h2>
+          <p class="section-description">
+            원하는 조건을 선택하고 빈 강의실을 검색해 봐.
+          </p>
+        </div>
+
+        <button type="button" id="resetButton" class="button button-light">
+          ↻ 초기화
+        </button>
+      </div>
+
+      <div class="search-panel">
+        <div class="search-step">
+          <span class="step-number">01</span>
+          <div>
+            <strong>장소 선택</strong>
+            <span>건물과 층을 선택해 줘.</span>
+          </div>
+        </div>
+
+        <form id="searchForm">
+          <div class="form-grid">
+            <label class="form-field">
+              <span class="field-label">건물</span>
+              <select id="buildingSelect" required>
+                <option value="근학관">근학관</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">층</span>
+              <select id="floorSelect" required>
+                <option value="">층 선택</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="search-divider"></div>
+
+          <div class="search-step">
+            <span class="step-number step-blue">02</span>
+            <div>
+              <strong>이용 시간 선택</strong>
+              <span>사용하려는 요일과 시간을 선택해 줘.</span>
+            </div>
+          </div>
+
+          <div class="form-grid time-grid">
+            <label class="form-field">
+              <span class="field-label">요일</span>
+              <select id="daySelect" required>
+                <option value="월요일">월요일</option>
+                <option value="화요일">화요일</option>
+                <option value="수요일">수요일</option>
+                <option value="목요일">목요일</option>
+                <option value="금요일">금요일</option>
+                <option value="토요일">토요일</option>
+                <option value="일요일">일요일</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">시작 시간</span>
+              <select id="startTime" required></select>
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">종료 시간</span>
+              <select id="endTime" required></select>
+            </label>
+          </div>
+
+          <div class="search-notice">
+            <span class="notice-icon">i</span>
+            <p>30분 단위로 검색할 수 있어. 선택한 시간 전체가 비어 있는 강의실만 표시돼.</p>
+          </div>
+
+          <button type="submit" class="button button-primary" id="searchButton">
+            <span>빈 강의실 검색하기</span>
+            <span class="button-arrow">→</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 이용 안내 -->
+    <section class="guide-grid">
+      <div class="guide-card guide-orange">
+        <div class="guide-icon">01</div>
+        <div>
+          <strong>조건 선택</strong>
+          <p>건물, 층, 요일과 시간을 선택해.</p>
+        </div>
+      </div>
+
+      <div class="guide-card guide-blue">
+        <div class="guide-icon">02</div>
+        <div>
+          <strong>빈 강의실 확인</strong>
+          <p>조건에 맞는 강의실을 확인해.</p>
+        </div>
+      </div>
+
+      <div class="guide-card guide-dark">
+        <div class="guide-icon">03</div>
+        <div>
+          <strong>시간표 확인</strong>
+          <p>강의실별 수업 일정을 확인해.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 검색 결과 -->
     <section class="results-section" aria-live="polite">
       <div class="section-heading results-heading">
         <div>
-          <p class="eyebrow">RESULT</p>
+          <p class="eyebrow">SEARCH RESULTS</p>
           <h2>검색 결과</h2>
+          <p class="section-description">
+            검색 조건에 맞는 강의실 목록이 여기에 표시돼.
+          </p>
         </div>
+
         <span id="resultCount" class="count">검색 전</span>
       </div>
+
       <div id="statusMessage" class="status-message">
         건물, 층, 요일과 시간을 선택한 뒤 검색해 줘.
       </div>
+
       <div id="resultsList" class="results-list"></div>
     </section>
 
+    <!-- 상세 시간표 -->
     <section class="panel detail-panel" id="detailPanel" hidden>
       <div class="section-heading">
         <div>
           <p class="eyebrow">ROOM SCHEDULE</p>
           <h2 id="detailTitle">강의실 시간표</h2>
+          <p class="section-description">
+            선택한 강의실의 요일별 수업 일정을 확인할 수 있어.
+          </p>
         </div>
-        <button type="button" id="closeDetailButton" class="button button-light">닫기</button>
+
+        <button type="button" id="closeDetailButton" class="button button-light">
+          닫기
+        </button>
       </div>
+
       <div id="detailContent"></div>
     </section>
 
+    <!-- 하단 -->
     <footer class="footer">
-      <p>현재 등록된 근학관 강의실만 검색할 수 있어. 자료가 없는 층이나 강의실은 검색 결과에 포함되지 않아.</p>
+      <div class="footer-brand">
+        <strong>CAMPUS</strong>
+        <span>SMART CAMPUS SERVICE</span>
+      </div>
+      <p>보다 편리한 캠퍼스 생활을 위한 빈 강의실 찾기 서비스</p>
+      <small>등록된 강의실 및 시간표 데이터를 기준으로 검색 결과를 제공해.</small>
     </footer>
+
   </main>
 
   <script src="script.js"></script>
