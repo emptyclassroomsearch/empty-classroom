@@ -18,7 +18,6 @@
 
   <main class="app">
 
-    <!-- 상단 헤더 -->
     <header class="site-header">
       <div class="brand">
         <div class="brand-mark">C</div>
@@ -33,7 +32,6 @@
       </button>
     </header>
 
-    <!-- 메인 배너 -->
     <section class="hero">
       <div class="hero-content">
         <div class="hero-label">
@@ -79,7 +77,6 @@
       </div>
     </section>
 
-    <!-- 검색 영역 -->
     <section class="search-section">
       <div class="section-heading">
         <div>
@@ -156,9 +153,30 @@
             </label>
           </div>
 
+          <!-- 빠른 이용 시간 설정 -->
+          <div class="duration-section">
+            <span class="duration-label">빠른 이용 시간 설정</span>
+
+            <div class="duration-buttons">
+              <button type="button" class="duration-button" data-duration="60" aria-pressed="false">
+                1시간
+              </button>
+
+              <button type="button" class="duration-button" data-duration="120" aria-pressed="false">
+                2시간
+              </button>
+
+              <button type="button" class="duration-button" data-duration="180" aria-pressed="false">
+                3시간
+              </button>
+            </div>
+          </div>
+
           <div class="search-notice">
             <span class="notice-icon">i</span>
-            <p>30분 단위로 검색할 수 있어. 선택한 시간 전체가 비어 있는 강의실만 표시돼.</p>
+            <p>
+              30분 단위로 검색할 수 있어. 빠른 시간 설정을 누르면 시작 시간부터 자동으로 종료 시간이 계산돼.
+            </p>
           </div>
 
           <button type="submit" class="button button-primary" id="searchButton">
@@ -169,7 +187,6 @@
       </div>
     </section>
 
-    <!-- 이용 안내 -->
     <section class="guide-grid">
       <div class="guide-card guide-orange">
         <div class="guide-icon">01</div>
@@ -196,7 +213,6 @@
       </div>
     </section>
 
-    <!-- 검색 결과 -->
     <section class="results-section" aria-live="polite">
       <div class="section-heading results-heading">
         <div>
@@ -217,7 +233,6 @@
       <div id="resultsList" class="results-list"></div>
     </section>
 
-    <!-- 상세 시간표 -->
     <section class="panel detail-panel" id="detailPanel" hidden>
       <div class="section-heading">
         <div>
@@ -236,7 +251,6 @@
       <div id="detailContent"></div>
     </section>
 
-    <!-- 하단 -->
     <footer class="footer">
       <div class="footer-brand">
         <strong>CAMPUS</strong>
