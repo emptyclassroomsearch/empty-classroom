@@ -20,8 +20,25 @@ const elements = {
   detailPanel: document.getElementById("detailPanel"),
   detailTitle: document.getElementById("detailTitle"),
   detailContent: document.getElementById("detailContent"),
-  closeDetail: document.getElementById("closeDetailButton")
+  closeDetail: document.getElementById("closeDetailButton"),
+  durationButtons: document.querySelectorAll(".duration-button")
 };
+
+let selectedDuration = null;
+
+// =========================
+// 기본 검색 요일
+// =========================
+
+function getDefaultDay() {
+  const today = new Date().getDay();
+
+  if (today === 0) {
+    return "월요일";
+  }
+
+  return dayOrder[today - 1];
+}
 
 // =========================
 // 시간 관련 기능
@@ -52,6 +69,73 @@ function createTimeOptions() {
 }
 
 // =========================
+// 빠른 이용 시간 설정
+// =========================
+
+function updateDurationButtons() {
+  elements.durationButtons.forEach(button => {
+    const duration = Number(button.dataset.duration);
+    const isActive = duration === selectedDuration;
+
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function clearDurationSelection() {
+  selectedDuration = null;
+  updateDurationButtons();
+}
+
+function applyDuration(duration) {
+  const startMinutes = toMinutes(elements.start.value);
+  const endMinutes = startMinutes + duration;
+
+  if (endMinutes > 22 * 60) {
+    clearDurationSelection();
+
+    setStatus(
+      "22:00 이후에는 검색할 수 없어. 시작 시간을 더 이르게 선택해 줘.",
+      "warning"
+    );
+
+    return;
+  }
+
+  selectedDuration = duration;
+  elements.end.value = formatTime(endMinutes);
+
+  updateDurationButtons();
+}
+
+function handleStartTimeChange() {
+  if (selectedDuration === null) {
+    return;
+  }
+
+  const startMinutes = toMinutes(elements.start.value);
+  const endMinutes = startMinutes + selectedDuration;
+
+  if (endMinutes > 22 * 60) {
+    clearDurationSelection();
+    elements.end.value = "22:00";
+
+    setStatus(
+      "선택한 이용 시간이 22:00을 넘어서 종료 시간을 22:00으로 조정했어. 다른 이용 시간을 선택해 줘.",
+      "warning"
+    );
+
+    return;
+  }
+
+  elements.end.value = formatTime(endMinutes);
+}
+
+function handleEndTimeChange() {
+  clearDurationSelection();
+}
+
+// =========================
 // 건물 및 층 선택
 // =========================
 
@@ -62,15 +146,13 @@ function loadFloors() {
       .map(room => room.floor)
   )].sort((a, b) => a - b);
 
-  elements.floor.innerHTML = '<option value="">층 선택</option>';
+  elements.floor.innerHTML = '<option value="all">전체 층</option>';
 
   floors.forEach(floor => {
     elements.floor.add(new Option(`${floor}층`, String(floor)));
   });
 
-  if (floors.length) {
-    elements.floor.value = String(floors[0]);
-  }
+  elements.floor.value = "all";
 }
 
 // =========================
@@ -139,11 +221,10 @@ function createInfoRow(label, value, className = "") {
 // 강의실 카드 생성
 // =========================
 
-function createRoomCard(room, building, floor, day, start, searchEnd) {
+function createRoomCard(room, building, day, start, searchEnd) {
   const card = document.createElement("article");
   card.className = "room-card";
 
-  // 카드 상단
   const header = document.createElement("div");
   header.className = "room-card-header";
 
@@ -160,7 +241,7 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
 
   const location = document.createElement("div");
   location.className = "room-location";
-  location.textContent = `${building} ${floor}층`;
+  location.textContent = `${building} ${room.floor}층`;
 
   info.append(number, name, location);
 
@@ -170,7 +251,6 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
 
   header.append(info, badge);
 
-  // 검색 정보
   const meta = document.createElement("div");
   meta.className = "room-meta";
 
@@ -185,7 +265,6 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
     createInfoRow("이용 가능 시간", availableText, "availability-row")
   );
 
-  // 다음 수업 정보
   const nextInfo = document.createElement("div");
   nextInfo.className = "next-class";
 
@@ -206,7 +285,6 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
   nextInfo.append(nextLabel, nextValue);
   meta.append(nextInfo);
 
-  // 카드 하단
   const footer = document.createElement("div");
   footer.className = "room-card-footer";
 
@@ -231,7 +309,64 @@ function createRoomCard(room, building, floor, day, start, searchEnd) {
 }
 
 // =========================
-// 강의실 검색
+// 층별 그룹 생성
+// =========================
+
+function createFloorGroup(floor, rooms, building, day, start, searchEnd) {
+  const floorGroup = document.createElement("section");
+  floorGroup.className = "floor-result-group";
+
+  const heading = document.createElement("button");
+  heading.type = "button";
+  heading.className = "floor-result-heading";
+  heading.setAttribute("aria-expanded", "true");
+
+  const title = document.createElement("span");
+  title.className = "floor-result-title";
+  title.textContent = `${floor}층`;
+
+  const count = document.createElement("span");
+  count.className = "floor-result-count";
+  count.textContent = `${rooms.length}개 강의실`;
+
+  const arrow = document.createElement("span");
+  arrow.className = "floor-result-arrow";
+  arrow.textContent = "⌄";
+
+  heading.append(title, count, arrow);
+
+  const roomList = document.createElement("div");
+  roomList.className = "floor-result-list";
+
+  rooms.forEach(room => {
+    const card = createRoomCard(
+      room,
+      building,
+      day,
+      start,
+      searchEnd
+    );
+
+    roomList.append(card);
+  });
+
+  heading.addEventListener("click", () => {
+    const isExpanded =
+      heading.getAttribute("aria-expanded") === "true";
+
+    heading.setAttribute("aria-expanded", String(!isExpanded));
+    roomList.hidden = isExpanded;
+    floorGroup.classList.toggle("is-collapsed", isExpanded);
+    arrow.textContent = isExpanded ? "›" : "⌄";
+  });
+
+  floorGroup.append(heading, roomList);
+
+  return floorGroup;
+}
+
+// =========================
+// 강의실 검색 - 층별 그룹화
 // =========================
 
 function searchClassrooms(event) {
@@ -244,7 +379,7 @@ function searchClassrooms(event) {
   const end = elements.end.value;
 
   if (!floorValue) {
-    setStatus("먼저 검색할 층을 선택해 줘.", "warning");
+    setStatus("검색할 층을 선택해 줘.", "warning");
     return;
   }
 
@@ -256,32 +391,39 @@ function searchClassrooms(event) {
     return;
   }
 
-  const roomsOnFloor = classroomData.classrooms.filter(room =>
-    room.building === building &&
-    room.floor === Number(floorValue)
-  );
+  const roomsToSearch = classroomData.classrooms.filter(room => {
+    const sameBuilding = room.building === building;
+    const sameFloor =
+      floorValue === "all" || room.floor === Number(floorValue);
 
-  if (roomsOnFloor.length === 0) {
+    return sameBuilding && sameFloor;
+  });
+
+  elements.results.innerHTML = "";
+
+  if (roomsToSearch.length === 0) {
     clearResults();
 
     setStatus(
-      "해당 층의 강의실 시간표 자료가 등록되어 있지 않아.",
+      "해당 조건의 강의실 시간표 자료가 등록되어 있지 않아.",
       "warning"
     );
 
     return;
   }
 
-  const availableRooms = roomsOnFloor.filter(room =>
+  const availableRooms = roomsToSearch.filter(room =>
     getRoomConflicts(room, day, searchStart, searchEnd).length === 0
   );
 
-  elements.results.innerHTML = "";
+  const floorText =
+    floorValue === "all" ? "전체 층" : `${floorValue}층`;
+
   elements.count.textContent = `${availableRooms.length}개`;
 
   if (availableRooms.length === 0) {
     setStatus(
-      `${building} ${floorValue}층에는 ${day} ${start}~${end} 전체 시간 동안 비어 있는 등록 강의실이 없어.`,
+      `${building} ${floorText}에는 ${day} ${start}~${end} 전체 시간 동안 비어 있는 등록 강의실이 없어.`,
       "warning"
     );
 
@@ -289,26 +431,44 @@ function searchClassrooms(event) {
   }
 
   setStatus(
-    `${building} ${floorValue}층 · ${day} ${start}~${end} 검색 결과야. 총 ${availableRooms.length}개 강의실을 찾았어.`,
+    `${building} ${floorText} · ${day} ${start}~${end} 검색 결과야. 총 ${availableRooms.length}개 강의실을 찾았어.`,
     "success"
   );
 
-  availableRooms.sort((a, b) =>
-    a.room.localeCompare(b.room, "ko", { numeric: true })
-  );
+  availableRooms.sort((a, b) => {
+    if (a.floor !== b.floor) {
+      return a.floor - b.floor;
+    }
+
+    return a.room.localeCompare(b.room, "ko", {
+      numeric: true
+    });
+  });
+
+  const groupedRooms = {};
 
   availableRooms.forEach(room => {
-    const card = createRoomCard(
-      room,
-      building,
-      floorValue,
-      day,
-      start,
-      searchEnd
-    );
+    if (!groupedRooms[room.floor]) {
+      groupedRooms[room.floor] = [];
+    }
 
-    elements.results.append(card);
+    groupedRooms[room.floor].push(room);
   });
+
+  Object.keys(groupedRooms)
+    .sort((a, b) => Number(a) - Number(b))
+    .forEach(floor => {
+      const floorGroup = createFloorGroup(
+        floor,
+        groupedRooms[floor],
+        building,
+        day,
+        start,
+        searchEnd
+      );
+
+      elements.results.append(floorGroup);
+    });
 }
 
 // =========================
@@ -394,13 +554,14 @@ function resetSearch() {
 
   loadFloors();
 
-  elements.day.value = "월요일";
+  elements.day.value = getDefaultDay();
   elements.start.value = "09:00";
   elements.end.value = "10:00";
 
+  clearDurationSelection();
   clearResults();
 
-  setStatus("건물, 층, 요일과 시간을 선택한 뒤 검색해 줘.");
+  setStatus("기본 검색 조건으로 초기화했어. 검색하기 버튼을 눌러 줘.");
 
   elements.detailPanel.hidden = true;
 }
@@ -443,6 +604,11 @@ themeToggle.addEventListener("click", () => {
 
 async function initialize() {
   createTimeOptions();
+
+  elements.building.value = "근학관";
+  elements.day.value = getDefaultDay();
+  elements.start.value = "09:00";
+  elements.end.value = "10:00";
 
   try {
     const response = await fetch(DATA_URL);
@@ -493,6 +659,16 @@ elements.reset.addEventListener("click", resetSearch);
 
 elements.closeDetail.addEventListener("click", () => {
   elements.detailPanel.hidden = true;
+});
+
+elements.start.addEventListener("change", handleStartTimeChange);
+elements.end.addEventListener("change", handleEndTimeChange);
+
+elements.durationButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const duration = Number(button.dataset.duration);
+    applyDuration(duration);
+  });
 });
 
 // 프로그램 시작
